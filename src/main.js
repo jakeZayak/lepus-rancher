@@ -12,6 +12,9 @@ const PAGES_URL = "https://jakezayak.github.io/lepus-rancher/";
 const isTouch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
 let renderer, scene, camera, world;
 const look = { x: 0, y: 0 };
+const settings = { look: 1.6, move: 1.4 };
+try { Object.assign(settings, JSON.parse(localStorage.getItem("lepusRancher.settings") || "{}")); } catch {}
+const saveSettings = () => { try { localStorage.setItem("lepusRancher.settings", JSON.stringify(settings)); } catch {} };
 let shopOpen = false, started = false, locked = false, debugNoLock = false;
 
 function slotIcon(key) {
@@ -227,8 +230,8 @@ function bindInput() {
   addEventListener("contextmenu", (e) => e.preventDefault());
   addEventListener("mousemove", (e) => {
     if (!hooks.playing || (!locked && !debugNoLock)) return;
-    G.player.yaw -= e.movementX * 0.0022;
-    G.player.pitch = Math.max(-1.5, Math.min(1.5, G.player.pitch - e.movementY * 0.0022));
+    G.player.yaw -= e.movementX * 0.0022 * (settings.look / 1.6);
+    G.player.pitch = Math.max(-1.5, Math.min(1.5, G.player.pitch - e.movementY * 0.0022 * (settings.look / 1.6)));
   });
   addEventListener("wheel", (e) => { if (hooks.playing) G.selectSlot(G.S.sel + (e.deltaY > 0 ? 1 : -1)); }, { passive: true });
   document.addEventListener("pointerlockchange", () => {
@@ -242,6 +245,13 @@ function bindInput() {
   }
   $("playBtn").onclick = () => begin(false);
   $("newBtn").onclick = () => { if (confirm("Start a brand new ranch? This erases your saved game.")) { G.resetSave(); location.reload(); } };
+  for (const [id, vid, key] of [["sLook", "vLook", "look"], ["sMove", "vMove", "move"]]) {
+    const el = $(id), out = $(vid);
+    el.value = settings[key];
+    out.textContent = Number(settings[key]).toFixed(1) + "x";
+    el.addEventListener("input", () => { settings[key] = Number(el.value); out.textContent = settings[key].toFixed(1) + "x"; saveSettings(); });
+    el.addEventListener("touchstart", (e) => e.stopPropagation());
+  }
   $("shopClose").onclick = closeShop;
   $("expBtn").onclick = async () => {
     const code = G.exportCode();
@@ -269,10 +279,11 @@ function bindTouch() {
   const stick = $("stick"), knob = $("knob"), R = 55;
   const zl = $("zoneL"), zr = $("zoneR");
   const setStick = (dx, dy) => {
-    const d = Math.hypot(dx, dy), k = d > R ? R / d : 1;
-    dx *= k; dy *= k;
-    knob.style.transform = `translate(${dx}px,${dy}px)`;
-    const ax = dx / R, ay = dy / R;
+    const rr = R / settings.move;
+    let ax = dx / rr, ay = dy / rr;
+    const m = Math.hypot(ax, ay);
+    if (m > 1) { ax /= m; ay /= m; }
+    knob.style.transform = `translate(${ax * R}px,${ay * R}px)`;
     I.f = Math.max(0, -ay); I.b = Math.max(0, ay); I.r = Math.max(0, ax); I.l = Math.max(0, -ax);
     I.sprint = Math.hypot(ax, ay) > 0.92 ? 1 : 0;
   };
@@ -294,12 +305,14 @@ function bindTouch() {
   zl.addEventListener("touchend", endStick); zl.addEventListener("touchcancel", endStick);
   let lId = null, lsx = 0, lsy = 0;
   const stickR = $("stickR"), knobR = $("knobR");
-  const curve = (v) => Math.sign(v) * Math.pow(Math.abs(v), 1.4);
+  const curve = (v) => Math.sign(v) * Math.pow(Math.abs(v), 1.15);
   const setLook = (dx, dy) => {
-    const d = Math.hypot(dx, dy), k = d > R ? R / d : 1;
-    dx *= k; dy *= k;
-    knobR.style.transform = `translate(${dx}px,${dy}px)`;
-    look.x = curve(dx / R); look.y = curve(dy / R);
+    const rr = R / settings.move;
+    let ax = dx / rr, ay = dy / rr;
+    const m = Math.hypot(ax, ay);
+    if (m > 1) { ax /= m; ay /= m; }
+    knobR.style.transform = `translate(${ax * R}px,${ay * R}px)`;
+    look.x = curve(ax); look.y = curve(ay);
   };
   zr.addEventListener("touchstart", (e) => {
     e.preventDefault();
@@ -336,8 +349,8 @@ function frame(now) {
   last = now;
   if (started && hooks.playing) {
     if (look.x || look.y) {
-      G.player.yaw -= look.x * 2.3 * dt;
-      G.player.pitch = Math.max(-1.5, Math.min(1.5, G.player.pitch - look.y * 1.5 * dt));
+      G.player.yaw -= look.x * 2.0 * settings.look * dt;
+      G.player.pitch = Math.max(-1.5, Math.min(1.5, G.player.pitch - look.y * 1.3 * settings.look * dt));
     }
     G.update(dt);
   }

@@ -98,3 +98,12 @@ body.touch .kb { display: none; }
 #rotate { display: none; position: fixed; inset: 0; z-index: 100; background: #111; color: #fff; text-align: center; align-items: center; justify-content: center; font-size: 22px; line-height: 1.6; }
 #rotate div { font-size: 22px; }
 @media (orientation: portrait) { body.touch #rotate { display: flex; } }
+
+.settings { margin: 8px 0 12px; text-align: left; }
+.settings label { display: flex; align-items: center; gap: 10px; font-size: 14px; margin: 6px 0; }
+.settings label.tc { display: none; }
+body.touch .settings label.tc { display: flex; }
+.settings input[type=range] { flex: 1; height: 28px; accent-color: #ff9a3c; }
+.settings span { width: 40px; font-weight: 800; text-align: right; }
+.card, .card * { touch-action: manipulation; }
+@media (max-height: 480px) { .card ul:not(.kb):not(.tc) { display: none; } .card .sub { margin: 2px 0 6px; } .settings { margin: 2px 0 8px; } .settings label { margin: 2px 0; } .card h1 { font-size: 26px; } }
