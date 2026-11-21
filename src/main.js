@@ -86,8 +86,8 @@ function updateHud() {
   }
   // prompt
   let p = "";
-  if (G.nearLab()) p = "Press E: Upgrade Lab";
-  else if (G.nearHopper() && S.slots.some((s) => s && s.key.startsWith("E:"))) p = "Select eggs (1-5) and shoot them into the hopper (right click)";
+  if (G.nearLab()) p = isTouch ? "Tap LAB to upgrade" : "Press E: Upgrade Lab";
+  else if (G.nearHopper() && S.slots.some((s) => s && s.key.startsWith("E:"))) p = isTouch ? "Pick your eggs, then hold SHOOT at the hopper" : "Select eggs (1-5) and shoot them into the hopper (right click)";
   $("prompt").textContent = p;
   if (isTouch) {
     $("touch").classList.toggle("hidden", !hooks.playing);

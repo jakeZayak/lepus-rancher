@@ -3,7 +3,7 @@
 html, body { margin: 0; height: 100%; overflow: hidden; background: #111; font-family: "Trebuchet MS", system-ui, sans-serif; color: #fff; user-select: none; }
 #game { position: fixed; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; display: block; }
 .hidden { display: none !important; }
-#hud { position: fixed; inset: 0; pointer-events: none; }
+#hud { position: fixed; inset: 0; pointer-events: none; z-index: 4; }
 #cross { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; }
 #cross::before, #cross::after { content: ""; position: absolute; background: #fff; box-shadow: 0 0 3px #000; }
 #cross::before { left: 6px; top: 0; width: 2px; height: 14px; }
@@ -67,13 +67,13 @@ html, body { touch-action: none; -webkit-user-select: none; -webkit-touch-callou
 #stick { position: absolute; width: 140px; height: 140px; border-radius: 50%; background: #fff2; border: 3px solid #fff5; display: none; pointer-events: none; }
 #stick.on { display: block; }
 #knob { position: absolute; left: 45px; top: 45px; width: 50px; height: 50px; border-radius: 50%; background: #fffa; }
-#touch button { position: absolute; border-radius: 50%; width: 84px; height: 84px; padding: 0; font-size: 15px; letter-spacing: 1px; box-shadow: none; border: 3px solid #fff8; background: #1d6fb8cc; color: #fff; }
-#touch button.down { filter: brightness(1.4); transform: scale(.94); }
-#tVac { right: 22px; bottom: 96px; width: 104px; height: 104px; font-size: 20px; background: #1d9bd6cc; }
-#tShoot { right: 138px; bottom: 74px; background: #d6781dcc; }
-#tJump { right: 152px; bottom: 166px; width: 66px; height: 66px; background: #3aa14fcc; font-size: 12px; }
-#tUse { left: 50%; margin-left: -45px; bottom: 150px; width: 90px; height: 90px; background: #d4631acc; }
-#tPause { left: 170px; top: 14px; width: 44px; height: 44px; font-size: 14px; background: #0007; }
+#touch button { position: absolute; border-radius: 50%; width: 84px; height: 84px; padding: 0; font-size: 14px; letter-spacing: 1px; box-shadow: none; border: 2px solid #fff6; background: #ffffff1f; color: #fffd; text-shadow: 0 1px 3px #000; -webkit-backdrop-filter: blur(1px); }
+#touch button.down { background: #ffffff55; border-color: #fffc; transform: scale(.94); }
+#touch #tVac { right: 22px; bottom: 96px; width: 104px; height: 104px; font-size: 20px; border-color: #5ac8ff99; color: #5ac8ff; }
+#touch #tShoot { right: 138px; bottom: 74px; border-color: #ffa64d99; color: #ffa64d; }
+#touch #tJump { right: 152px; bottom: 166px; width: 66px; height: 66px; border-color: #7dff8f99; color: #7dff8f; font-size: 12px; }
+#touch #tUse { left: 50%; margin-left: -45px; bottom: 150px; width: 90px; height: 90px; border-color: #ffd24a99; color: #ffd24a; }
+#touch #tPause { left: 170px; top: 14px; width: 44px; height: 44px; font-size: 14px; background: #0007; }
 body.touch #market { top: 10px; right: 64px; padding: 4px 8px; min-width: 100px; transform-origin: top right; transform: scale(.8); }
 body.touch .slot { width: 54px; height: 54px; pointer-events: auto; }
 body.touch .slot img { max-width: 36px; max-height: 36px; }
@@ -86,3 +86,10 @@ body.touch .toast { font-size: 13px; padding: 6px 12px; }
 @media (max-height: 480px) { .card { padding: 14px 22px; } .card h1 { font-size: 30px; } .card ul { font-size: 12px; margin: 4px 0; } }
 
 .xfer { margin-top: 6px; }
+
+#touch #tPause { background: #0004 !important; }
+#stick { background: #ffffff14; border-color: #fff4; }
+#knob { background: #ffffff66; }
+.tc { display: none; }
+body.touch .tc { display: block; }
+body.touch .kb { display: none; }
