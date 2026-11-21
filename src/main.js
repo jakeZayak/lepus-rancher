@@ -336,8 +336,21 @@ function importFromHash() {
   history.replaceState(null, "", location.pathname);
 }
 
+// One-time hand-off: the first time the old localhost copy is opened with a save, send it to the live site.
+function autoMigrate() {
+  if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") return;
+  try {
+    if (localStorage.getItem("lepusRancher.migrated") || !localStorage.getItem("lepusRancher.v1")) return;
+    const code = G.exportCode();
+    if (!code) return;
+    localStorage.setItem("lepusRancher.migrated", "1");
+    location.replace(PAGES_URL + "#save=" + code);
+  } catch {}
+}
+
 async function main() {
   importFromHash();
+  autoMigrate();
   const canvas = $("game");
   renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
