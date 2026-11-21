@@ -1,0 +1,88 @@
+:root { --ink:#2b1b0e; --paper:#fff6dc; --accent:#ff9a3c; --gold:#ffd23a; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #111; font-family: "Trebuchet MS", system-ui, sans-serif; color: #fff; user-select: none; }
+#game { position: fixed; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+.hidden { display: none !important; }
+#hud { position: fixed; inset: 0; pointer-events: none; }
+#cross { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; }
+#cross::before, #cross::after { content: ""; position: absolute; background: #fff; box-shadow: 0 0 3px #000; }
+#cross::before { left: 6px; top: 0; width: 2px; height: 14px; }
+#cross::after { top: 6px; left: 0; height: 2px; width: 14px; }
+#coinbox { position: absolute; left: 16px; top: 14px; font-size: 28px; font-weight: 800; text-shadow: 0 2px 0 #000a; background: #0006; padding: 4px 14px; border-radius: 12px; transition: transform .15s; }
+#coinbox.pop { transform: scale(1.15); }
+.coin { color: var(--gold); }
+#clock { position: absolute; left: 20px; top: 62px; font-size: 14px; opacity: .8; text-shadow: 0 1px 2px #000; }
+#market { position: absolute; right: 14px; top: 14px; background: #0007; padding: 8px 12px; border-radius: 12px; min-width: 130px; }
+#market h4 { margin: 0 0 4px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; opacity: .8; }
+.mrow { display: flex; align-items: center; gap: 8px; height: 28px; }
+.mrow img { height: 22px; width: 22px; object-fit: contain; image-rendering: pixelated; }
+.mp { font-weight: 800; flex: 1; text-align: right; }
+.ma { width: 14px; font-size: 12px; } .ma.mup { color: #6dff7a; } .ma.mdown { color: #ff7a7a; }
+#toasts { position: absolute; left: 50%; top: 70px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.toast { background: #000b; padding: 8px 16px; border-radius: 10px; font-size: 16px; animation: in .25s; max-width: 80vw; text-align: center; }
+.toast.out { opacity: 0; transition: opacity .5s; }
+.sale { color: var(--gold); font-weight: 800; font-size: 22px; text-shadow: 0 2px 0 #000; animation: rise 1.4s forwards; }
+@keyframes in { from { transform: translateY(-8px); opacity: 0; } }
+@keyframes rise { to { transform: translateY(-30px); opacity: 0; } }
+#prompt { position: absolute; left: 50%; bottom: 128px; transform: translateX(-50%); font-size: 18px; text-shadow: 0 2px 4px #000; text-align: center; max-width: 80vw; }
+#selname { position: absolute; left: 50%; bottom: 98px; transform: translateX(-50%); font-size: 14px; opacity: .9; text-shadow: 0 1px 3px #000; }
+#slots { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); display: flex; gap: 8px; }
+.slot { position: relative; width: 66px; height: 66px; background: #0008; border: 3px solid #fff4; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.slot.sel { border-color: var(--gold); background: #2a2008cc; transform: translateY(-6px); }
+.slot img { max-width: 44px; max-height: 44px; image-rendering: pixelated; }
+.slot .num { position: absolute; left: 5px; top: 1px; font-size: 12px; opacity: .7; }
+.slot .cnt { position: absolute; right: 4px; bottom: 1px; font-size: 13px; font-weight: 800; text-shadow: 0 1px 2px #000; }
+#hint { position: absolute; left: 14px; bottom: 6px; font-size: 11px; opacity: .55; }
+#overlay, #shop { position: fixed; inset: 0; background: #000a; display: flex; align-items: center; justify-content: center; z-index: 5; }
+.card { background: var(--paper); color: var(--ink); border-radius: 20px; padding: 28px 36px; width: min(520px, 92vw); box-shadow: 0 10px 40px #000a; text-align: center; max-height: 92vh; overflow: auto; }
+.card.wide { width: min(720px, 94vw); text-align: left; }
+.card h1 { margin: 0; font-size: 44px; color: #d4631a; letter-spacing: 2px; }
+.sub { margin: 4px 0 14px; }
+.card ul { text-align: left; font-size: 15px; line-height: 1.55; padding-left: 20px; }
+button { font: inherit; font-weight: 800; font-size: 18px; background: var(--accent); color: #fff; border: 0; border-radius: 12px; padding: 10px 28px; cursor: pointer; box-shadow: 0 4px 0 #b5621a; }
+button:hover:not(:disabled) { filter: brightness(1.08); }
+button:disabled { background: #bbb; box-shadow: 0 4px 0 #888; cursor: default; }
+button.ghost { background: transparent; color: #8a5a2a; box-shadow: none; font-size: 14px; }
+.shophead { display: flex; justify-content: space-between; align-items: center; }
+.shophead h2 { margin: 0; color: #d4631a; }
+.shophead b { font-size: 26px; }
+#upgrades { margin: 10px 0; display: flex; flex-direction: column; gap: 8px; }
+.up { display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 12px; padding: 8px 14px; }
+.up .ut { flex: 1; } .up p { margin: 2px 0 0; font-size: 13px; opacity: .75; } .up em { font-style: normal; color: #b5621a; font-weight: 700; }
+.up button { min-width: 110px; font-size: 15px; padding: 8px 12px; }
+.pips { margin-left: 10px; } .pips i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ddd; margin-right: 4px; } .pips i.on { background: var(--accent); }
+.up.maxed { opacity: .6; }
+#dex { display: flex; gap: 10px; margin-bottom: 14px; }
+.dexc { flex: 1; text-align: center; font-size: 12px; background: #fff; border-radius: 10px; padding: 6px; }
+.dexc img { height: 40px; image-rendering: pixelated; filter: brightness(0); opacity: .4; display: block; margin: 0 auto 2px; }
+.dexc.got img { filter: none; opacity: 1; }
+h3 { margin: 12px 0 6px; }
+#loading { margin-top: 10px; opacity: .6; }
+
+/* touch controls */
+html, body { touch-action: none; -webkit-user-select: none; -webkit-touch-callout: none; overscroll-behavior: none; }
+#touch { position: fixed; inset: 0; z-index: 3; }
+#zoneL { position: absolute; left: 0; top: 0; width: 45%; height: 100%; }
+#zoneR { position: absolute; right: 0; top: 0; width: 55%; height: 100%; }
+#stick { position: absolute; width: 140px; height: 140px; border-radius: 50%; background: #fff2; border: 3px solid #fff5; display: none; pointer-events: none; }
+#stick.on { display: block; }
+#knob { position: absolute; left: 45px; top: 45px; width: 50px; height: 50px; border-radius: 50%; background: #fffa; }
+#touch button { position: absolute; border-radius: 50%; width: 84px; height: 84px; padding: 0; font-size: 15px; letter-spacing: 1px; box-shadow: none; border: 3px solid #fff8; background: #1d6fb8cc; color: #fff; }
+#touch button.down { filter: brightness(1.4); transform: scale(.94); }
+#tVac { right: 22px; bottom: 96px; width: 104px; height: 104px; font-size: 20px; background: #1d9bd6cc; }
+#tShoot { right: 138px; bottom: 74px; background: #d6781dcc; }
+#tJump { right: 152px; bottom: 166px; width: 66px; height: 66px; background: #3aa14fcc; font-size: 12px; }
+#tUse { left: 50%; margin-left: -45px; bottom: 150px; width: 90px; height: 90px; background: #d4631acc; }
+#tPause { left: 170px; top: 14px; width: 44px; height: 44px; font-size: 14px; background: #0007; }
+body.touch #market { top: 10px; right: 64px; padding: 4px 8px; min-width: 100px; transform-origin: top right; transform: scale(.8); }
+body.touch .slot { width: 54px; height: 54px; pointer-events: auto; }
+body.touch .slot img { max-width: 36px; max-height: 36px; }
+body.touch #slots { bottom: 10px; gap: 6px; }
+body.touch #prompt { bottom: 76px; font-size: 15px; }
+body.touch #selname { bottom: 70px; font-size: 12px; }
+body.touch #toasts { top: 56px; }
+body.touch .toast { font-size: 13px; padding: 6px 12px; }
+.card, #shop { touch-action: pan-y; }
+@media (max-height: 480px) { .card { padding: 14px 22px; } .card h1 { font-size: 30px; } .card ul { font-size: 12px; margin: 4px 0; } }
+
+.xfer { margin-top: 6px; }

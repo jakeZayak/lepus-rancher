@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LEPUS Rancher</title>
+<link rel="icon" href="assets/icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div id="coinbox"><span class="coin">◉</span> <span id="coins">0</span></div>
+  <div id="clock"></div>
+  <div id="market"></div>
+  <div id="cross"></div>
+  <div id="toasts"></div>
+  <div id="prompt"></div>
+  <div id="selname"></div>
+  <div id="slots"></div>
+  <div id="hint">WASD move · Shift sprint · Space jump · Hold LEFT click to vacuum · RIGHT click / Q to shoot · 1-5 / wheel select · E lab · M music</div>
+</div>
+
+<div id="touch" class="hidden">
+  <div id="zoneL"></div><div id="zoneR"></div>
+  <div id="stick"><div id="knob"></div></div>
+  <button id="tPause">&#10074;&#10074;</button>
+  <button id="tUse" class="hidden">LAB</button>
+  <button id="tJump">JUMP</button>
+  <button id="tShoot">SHOOT</button>
+  <button id="tVac">VAC</button>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <h1 id="overlayTitle">LEPUS Rancher</h1>
+    <p class="sub">Vacuum up Lepus, feed them carrots, and sell their eggs.</p>
+    <ul>
+      <li><b>Hold VAC / left click</b> vacuum Lepus, carrots and eggs</li>
+      <li><b>SHOOT / right click / Q</b> shoot out what you've selected (tap a slot to pick it)</li>
+      <li><b>Garden</b> (south of the ranch) grows carrots to vacuum</li>
+      <li><b>Pens</b> hold your Lepus. Shoot carrots in to make eggs</li>
+      <li><b>Hopper</b> shoot eggs in to sell them</li>
+      <li><b>Lab</b> press E (or the LAB button) to buy upgrades</li>
+    </ul>
+    <button id="playBtn" disabled>Play</button>
+    <button id="newBtn" class="ghost">New ranch</button>
+    <div class="xfer"><button id="expBtn" class="ghost">Copy transfer link</button><button id="impBtn" class="ghost">Import save</button></div>
+    <div id="loading">Loading…</div>
+  </div>
+</div>
+
+<div id="shop" class="hidden">
+  <div class="card wide">
+    <div class="shophead"><h2>Upgrade Lab</h2><div><span class="coin">◉</span> <b id="shopCoins">0</b></div></div>
+    <div id="upgrades"></div>
+    <h3>Lepusdex</h3>
+    <div id="dex"></div>
+    <button id="shopClose">Close (E)</button>
+  </div>
+</div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
