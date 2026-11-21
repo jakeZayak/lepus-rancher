@@ -11,6 +11,7 @@ const hooks = { playing: false, toast: null, sold: null, started: false };
 const PAGES_URL = "https://jakezayak.github.io/lepus-rancher/";
 const isTouch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
 let renderer, scene, camera, world;
+const look = { x: 0, y: 0 };
 let shopOpen = false, started = false, locked = false, debugNoLock = false;
 
 function slotIcon(key) {
@@ -147,6 +148,8 @@ function resume() {
 }
 function pause() {
   hooks.playing = false;
+  look.x = look.y = 0;
+  Object.assign(G.input, { f: 0, b: 0, l: 0, r: 0, sprint: 0, jump: 0 });
   G.input.vac = G.input.shoot = 0;
   vacHum(false);
   if (!shopOpen) {
@@ -155,8 +158,16 @@ function pause() {
     $("playBtn").textContent = "Resume";
   }
 }
+function tryLandscape() {
+  if (!isTouch) return;
+  try {
+    const fs = document.documentElement.requestFullscreen?.();
+    (fs || Promise.resolve()).then(() => screen.orientation?.lock?.("landscape")).catch(() => {});
+  } catch {}
+}
 function begin(newGame) {
   initAudio();
+  tryLandscape();
   if (!started) {
     started = true;
     hooks.started = true;
@@ -225,7 +236,10 @@ function bindInput() {
     if (!locked && hooks.playing && !debugNoLock) pause();
   });
   addEventListener("blur", () => { if (hooks.playing && !debugNoLock) pause(); });
-  if (isTouch) bindTouch();
+  if (isTouch) {
+    bindTouch();
+    matchMedia("(orientation: portrait)").addEventListener("change", (e) => { if (e.matches && hooks.playing) pause(); });
+  }
   $("playBtn").onclick = () => begin(false);
   $("newBtn").onclick = () => { if (confirm("Start a brand new ranch? This erases your saved game.")) { G.resetSave(); location.reload(); } };
   $("shopClose").onclick = closeShop;
@@ -278,17 +292,28 @@ function bindTouch() {
     for (const t of e.changedTouches) if (t.identifier === sId) { sId = null; stick.classList.remove("on"); I.f = I.b = I.l = I.r = I.sprint = 0; }
   };
   zl.addEventListener("touchend", endStick); zl.addEventListener("touchcancel", endStick);
-  let lId = null, lx = 0, ly = 0;
-  zr.addEventListener("touchstart", (e) => { e.preventDefault(); if (lId !== null) return; const t = e.changedTouches[0]; lId = t.identifier; lx = t.clientX; ly = t.clientY; }, { passive: false });
+  let lId = null, lsx = 0, lsy = 0;
+  const stickR = $("stickR"), knobR = $("knobR");
+  const curve = (v) => Math.sign(v) * Math.pow(Math.abs(v), 1.4);
+  const setLook = (dx, dy) => {
+    const d = Math.hypot(dx, dy), k = d > R ? R / d : 1;
+    dx *= k; dy *= k;
+    knobR.style.transform = `translate(${dx}px,${dy}px)`;
+    look.x = curve(dx / R); look.y = curve(dy / R);
+  };
+  zr.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (lId !== null) return;
+    const t = e.changedTouches[0];
+    lId = t.identifier; lsx = t.clientX; lsy = t.clientY;
+    stickR.style.left = lsx - 70 + "px"; stickR.style.top = lsy - 70 + "px"; stickR.classList.add("on");
+    setLook(0, 0);
+  }, { passive: false });
   zr.addEventListener("touchmove", (e) => {
     e.preventDefault();
-    for (const t of e.changedTouches) if (t.identifier === lId) {
-      G.player.yaw -= (t.clientX - lx) * 0.006;
-      G.player.pitch = Math.max(-1.5, Math.min(1.5, G.player.pitch - (t.clientY - ly) * 0.006));
-      lx = t.clientX; ly = t.clientY;
-    }
+    for (const t of e.changedTouches) if (t.identifier === lId) setLook(t.clientX - lsx, t.clientY - lsy);
   }, { passive: false });
-  const endLook = (e) => { for (const t of e.changedTouches) if (t.identifier === lId) lId = null; };
+  const endLook = (e) => { for (const t of e.changedTouches) if (t.identifier === lId) { lId = null; stickR.classList.remove("on"); look.x = look.y = 0; } };
   zr.addEventListener("touchend", endLook); zr.addEventListener("touchcancel", endLook);
   const hold = (id, key) => {
     const b = $(id);
@@ -309,7 +334,13 @@ let last = performance.now(), hudT = 0;
 function frame(now) {
   const dt = Math.max(0, Math.min(0.1, (now - last) / 1000));
   last = now;
-  if (started && hooks.playing) G.update(dt);
+  if (started && hooks.playing) {
+    if (look.x || look.y) {
+      G.player.yaw -= look.x * 2.3 * dt;
+      G.player.pitch = Math.max(-1.5, Math.min(1.5, G.player.pitch - look.y * 1.5 * dt));
+    }
+    G.update(dt);
+  }
   if (started) {
     G.syncCamera();
     ring.scale.setScalar(G.vacActive() ? 1 + 0.15 * Math.sin(now / 60) : 1);
